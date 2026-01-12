@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Invited!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffe5b4 0%, #fff8dc 100%);
+            font-family: 'Georgia', serif;
+            padding: 20px;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .envelope-wrapper {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 300px;
+            cursor: pointer;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            z-index: 10;
+        }
+
+        .envelope-wrapper.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #d4a574 0%, #c9a076 50%, #d4a574 100%);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            border-radius: 8px;
+        }
+
+        .flap-line {
+            position: absolute;
+            height: 1px;
+            background: rgba(101, 67, 33, 0.35);
+            transform-origin: center;
+        }
+
+        .flap-line:nth-child(1) {
+            width: 141.4%;
+            top: 0;
+            left: 0;
+            transform: rotate(33.7deg);
+            transform-origin: top left;
+        }
+
+        .flap-line:nth-child(2) {
+            width: 141.4%;
+            top: 0;
+            right: 0;
+            transform: rotate(-33.7deg);
+            transform-origin: top right;
+        }
+
+        .flap-line:nth-child(3) {
+            width: 141.4%;
+            bottom: 0;
+            left: 0;
+            transform: rotate(-33.7deg);
+            transform-origin: bottom left;
+        }
+
+        .flap-line:nth-child(4) {
+            width: 141.4%;
+            bottom: 0;
+            right: 0;
+            transform: rotate(33.7deg);
+            transform-origin: bottom right;
+        }
+
+        .wax-seal {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: 
+                radial-gradient(circle at 35% 35%, #e85d4c 0%, #d44638 30%, #c0392b 60%, #a52c1f 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                0 8px 20px rgba(139, 0, 0, 0.4),
+                inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+                inset 3px 3px 8px rgba(255, 120, 100, 0.3);
+            z-index: 20;
+            transition: all 0.3s ease;
+        }
+
+        .wax-seal::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 58px;
+            height: 58px;
+            border: 2px solid rgba(100, 20, 10, 0.4);
+            border-radius: 50%;
+        }
+
+        .wax-seal::after {
+            content: '♥';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 38px;
+            color: rgba(100, 20, 10, 0.5);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .envelope-wrapper:hover .wax-seal {
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .envelope-wrapper.opening .wax-seal {
+            animation: breakSeal 0.6s ease forwards;
+        }
+
+        @keyframes breakSeal {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(0.5) rotate(45deg); opacity: 0; }
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d4a574;
+            font-size: 16px;
+            opacity: 0.9;
+            animation: pulse 2s ease-in-out infinite;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .invitation-card {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
+            background: #fffbf5;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            padding: 60px 50px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .invitation-card::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 1px dashed #d4a574;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .invitation-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .photo-container {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #d4a574;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            background: #f5ebe0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .invitation-content {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 52px;
+            color: #d4a574;
+            margin-bottom: 25px;
+            text-shadow: none;
+            font-family: 'Georgia', serif;
+            font-weight: normal;
+        }
+
+        .decorative-line {
+            width: 100px;
+            height: 2px;
+            background: #d4a574;
+            margin: 25px auto;
+            border-radius: 1px;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 22px;
+            color: #b8956a;
+            font-style: italic;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .details {
+            margin: 30px 0;
+            line-height: 1.8;
+        }
+
+        .detail-item {
+            margin: 25px 0;
+            font-size: 18px;
+            color: #333;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            border-left: none;
+        }
+
+        .detail-label {
+            font-weight: normal;
+            color: #d4a574;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #666;
+            margin: 40px 0 0 0;
+            line-height: 1.8;
+            font-style: normal;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .envelope-wrapper {
+                width: 90%;
+                max-width: 400px;
+                height: auto;
+                aspect-ratio: 3/2;
+                top: 35%;
+            }
+
+            .invitation-card {
+                padding: 40px 25px;
+            }
+
+            .invitation-card::before {
+                top: 15px;
+                left: 15px;
+                right: 15px;
+                bottom: 15px;
+            }
+
+            .photo-container {
+                width: 180px;
+                height: 180px;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+                margin-bottom: 30px;
+            }
+
+            .decorative-line {
+                width: 80px;
+                margin: 20px auto;
+            }
+
+            .details {
+                margin: 25px 0;
+            }
+
+            .detail-item {
+                margin: 20px 0;
+                font-size: 16px;
+            }
+
+            .detail-label {
+                font-size: 11px;
+                letter-spacing: 1.5px;
+            }
+
+            .detail-value {
+                font-size: 16px;
+            }
+
+            .message {
+                font-size: 15px;
+                margin-top: 30px;
+            }
+
+            .wax-seal {
+                width: 60px;
+                height: 60px;
+            }
+
+            .wax-seal::before {
+                width: 44px;
+                height: 44px;
+            }
+
+            .wax-seal::after {
+                font-size: 28px;
+            }
+
+            .click-hint {
+                font-size: 13px;
+                bottom: -35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .envelope-wrapper {
+                width: 85%;
+                max-width: 320px;
+            }
+
+            .invitation-card {
+                padding: 35px 20px;
+            }
+
+            .photo-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .detail-item {
+                font-size: 15px;
+            }
+
+            .detail-value {
+                font-size: 15px;
+            }
+
+            .message {
+                font-size: 14px;
+            }
+
+            .wax-seal {
+                width: 55px;
+                height: 55px;
+            }
+
+            .wax-seal::after {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope">
+                <div class="flap-line"></div>
+                <div class="flap-line"></div>
+                <div class="flap-line"></div>
+                <div class="flap-line"></div>
+                <div class="wax-seal"></div>
+            </div>
+            <div class="click-hint">Click to open</div>
+        </div>
+
+        <div class="invitation-card" id="invitationCard">
+            <div class="photo-container">
+                <!-- Replace this src with your image URL -->
+                <img src="invite.jpeg" alt="Event Photo">
+            </div>
+
+            <div class="invitation-content">
+                <h1>You're Invited!</h1>
+                <div class="decorative-line"></div>
+                <p class="subtitle">Join us for a special celebration</p>
+                
+                <div class="details">
+                    <div class="detail-item">
+                        <div class="detail-label">Event</div>
+                        <div class="detail-value">Anubhav's Yagyopavit Sanskar</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value">Monday, January 19th, 2026</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">A-1, 3/29 Rajender Nagar<br>Sahibabad, Ghaziababad</div>
+                    </div>
+                </div>
+
+                <p class="message">
+                    Your presence would make our celebration complete. 
+                    Join us for an evening of joy, laughter, and wonderful memories!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const invitationCard = document.getElementById('invitationCard');
+
+        envelopeWrapper.addEventListener('click', function() {
+            envelopeWrapper.classList.add('opening');
+            
+            setTimeout(() => {
+                envelopeWrapper.classList.add('hidden');
+                invitationCard.classList.add('visible');
+            }, 600);
+        });
+    </script>
+</body>
+</html>
