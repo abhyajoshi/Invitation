@@ -37,102 +37,18 @@
             width: 100%;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: opacity 0.6s ease;
+            will-change: opacity;
         }
 
         .screen.active {
             opacity: 1;
             pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1);
         }
 
-        .screen.exit-left {
-            animation: slideOutLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.exit-right {
-            animation: slideOutRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.exit-up {
-            animation: slideOutUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.exit-zoom {
-            animation: zoomOut 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.enter-right {
-            animation: slideInRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.enter-left {
-            animation: slideInLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .screen.enter-zoom {
-            animation: zoomIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        @keyframes slideOutLeft {
-            to { 
-                transform: translate(-150%, -50%) rotate(-20deg);
-                opacity: 0;
-            }
-        }
-
-        @keyframes slideOutRight {
-            to { 
-                transform: translate(50%, -50%) rotate(20deg);
-                opacity: 0;
-            }
-        }
-
-        @keyframes slideOutUp {
-            to { 
-                transform: translate(-50%, -150%) scale(0.8);
-                opacity: 0;
-            }
-        }
-
-        @keyframes zoomOut {
-            to { 
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
-        }
-
-        @keyframes slideInRight {
-            from { 
-                transform: translate(50%, -50%) rotate(20deg);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, -50%) rotate(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideInLeft {
-            from { 
-                transform: translate(-150%, -50%) rotate(-20deg);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, -50%) rotate(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes zoomIn {
-            from { 
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
+        .screen.exiting {
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .envelope-wrapper {
@@ -671,8 +587,6 @@
     <script>
         let currentScreen = 1;
         const totalScreens = 7;
-        const transitions = ['exit-left', 'exit-right', 'exit-up', 'exit-zoom'];
-        const enters = ['enter-right', 'enter-left', 'enter-zoom'];
         let autoAdvanceTimer;
 
         const envelopeWrapper = document.getElementById('envelopeWrapper');
@@ -719,23 +633,18 @@
                 const currentElement = document.getElementById('screen' + currentScreen);
                 const nextElement = document.getElementById('screen' + (currentScreen + 1));
                 
-                // Random exit transition
-                const exitTransition = transitions[Math.floor(Math.random() * transitions.length)];
-                currentElement.classList.add(exitTransition);
+                // Simple fade out current
+                currentElement.classList.add('exiting');
                 currentElement.classList.remove('active');
                 
-                // Random enter transition
-                const enterTransition = enters[Math.floor(Math.random() * enters.length)];
-                
+                // Fade in next
                 setTimeout(() => {
-                    nextElement.classList.add(enterTransition);
                     nextElement.classList.add('active');
                     
-                    // Clean up transition classes
+                    // Clean up
                     setTimeout(() => {
-                        currentElement.className = 'screen';
-                        nextElement.className = 'screen active';
-                    }, 800);
+                        currentElement.classList.remove('exiting');
+                    }, 600);
                 }, 100);
                 
                 currentScreen++;
