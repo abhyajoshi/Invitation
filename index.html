@@ -20,32 +20,6 @@
             font-family: 'Georgia', serif;
             padding: 20px;
             overflow: hidden;
-            position: relative;
-        }
-
-        .sparkle {
-            position: fixed;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 0;
-            animation: sparkleFloat linear infinite;
-        }
-
-        @keyframes sparkleFloat {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
-            }
         }
 
         .container {
@@ -53,7 +27,6 @@
             width: 100%;
             max-width: 700px;
             min-height: 500px;
-            z-index: 10;
         }
 
         .screen {
@@ -504,9 +477,6 @@
     </style>
 </head>
 <body>
-    <!-- Sparkles -->
-    <div id="sparkles"></div>
-
     <div class="container">
         <!-- Screen 1: Envelope -->
         <div class="screen active" id="screen1">
@@ -556,7 +526,7 @@
             <div class="card">
                 <div class="card-content">
                     <div class="detail-card">
-                        <div class="detail-icon">📅</div>
+                        <div class="detail-icon">🗓️</div>
                         <div class="detail-label">Date</div>
                         <div class="detail-value">Monday<br>January 19th, 2026</div>
                     </div>
@@ -620,50 +590,6 @@
         let autoAdvanceTimer;
 
         const envelopeWrapper = document.getElementById('envelopeWrapper');
-
-        // Create floating sparkles
-        function createSparkle() {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.textContent = '✨';
-            
-            // Random horizontal position
-            sparkle.style.left = Math.random() * 100 + '%';
-            
-            // Random font size (15-30px)
-            const size = Math.random() * 15 + 15;
-            sparkle.style.fontSize = size + 'px';
-            
-            // Random animation duration (5-15s)
-            const duration = Math.random() * 10 + 5;
-            sparkle.style.animationDuration = duration + 's';
-            
-            // Random delay
-            sparkle.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.getElementById('sparkles').appendChild(sparkle);
-            
-            // Remove sparkle after animation
-            setTimeout(() => {
-                sparkle.remove();
-            }, (duration + 2) * 1000);
-        }
-
-        // Create sparkles continuously
-        function initSparkles() {
-            // Create initial batch
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => createSparkle(), Math.random() * 2000);
-            }
-            
-            // Keep creating new sparkles
-            setInterval(() => {
-                createSparkle();
-            }, 500);
-        }
-
-        // Start sparkles
-        initSparkles();
 
         // Auto-advance after 4 seconds
         function startAutoAdvance() {
