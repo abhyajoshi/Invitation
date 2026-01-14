@@ -16,33 +16,133 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #ffe5b4 0%, #fff8dc 100%);
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 50%, #fab1a0 100%);
             font-family: 'Georgia', serif;
             padding: 20px;
+            overflow: hidden;
         }
 
         .container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
+            min-height: 500px;
+        }
+
+        .screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .screen.exit-left {
+            animation: slideOutLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.exit-right {
+            animation: slideOutRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.exit-up {
+            animation: slideOutUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.exit-zoom {
+            animation: zoomOut 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.enter-right {
+            animation: slideInRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.enter-left {
+            animation: slideInLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .screen.enter-zoom {
+            animation: zoomIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes slideOutLeft {
+            to { 
+                transform: translate(-150%, -50%) rotate(-20deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideOutRight {
+            to { 
+                transform: translate(50%, -50%) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideOutUp {
+            to { 
+                transform: translate(-50%, -150%) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoomOut {
+            to { 
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInRight {
+            from { 
+                transform: translate(50%, -50%) rotate(20deg);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from { 
+                transform: translate(-150%, -50%) rotate(-20deg);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            from { 
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
         }
 
         .envelope-wrapper {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             width: 450px;
             height: 300px;
+            margin: 0 auto;
             cursor: pointer;
-            transition: opacity 0.6s ease, transform 0.6s ease;
             z-index: 10;
-        }
-
-        .envelope-wrapper.hidden {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.8);
-            pointer-events: none;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
         }
 
         .envelope {
@@ -51,7 +151,6 @@
             height: 100%;
             background: linear-gradient(135deg, #d4a574 0%, #c9a076 50%, #d4a574 100%);
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
             overflow: hidden;
         }
 
@@ -149,80 +248,102 @@
         }
 
         .envelope-wrapper:hover .wax-seal {
-            transform: translate(-50%, -50%) scale(1.05);
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
-        .envelope-wrapper.opening .wax-seal {
+        .envelope-wrapper.breaking .wax-seal {
             animation: breakSeal 0.6s ease forwards;
         }
 
         @keyframes breakSeal {
             0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(0.5) rotate(45deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(15deg); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(0.3) rotate(90deg); opacity: 0; }
         }
 
         .click-hint {
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #d4a574;
-            font-size: 16px;
-            opacity: 0.9;
-            animation: pulse 2s ease-in-out infinite;
-            font-weight: 400;
-            font-style: italic;
+            display: none;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
+            0%, 100% { opacity: 0.6; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255, 251, 245, 0.95) 0%, rgba(255, 248, 230, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.4),
+                0 0 100px rgba(240, 165, 0, 0.2);
+            padding: 60px 50px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+            margin: 0 auto;
+            border: 2px solid rgba(240, 165, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 30px;
+            padding: 3px;
+            background: linear-gradient(45deg, #f0a500, #d4a574, #f0a500);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
 
-        .invitation-card {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
-            background: #fffbf5;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-            padding: 60px 50px;
-            max-width: 600px;
-            width: 100%;
-            position: relative;
-        }
-
-        .invitation-card::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            border: 1px dashed #d4a574;
-            border-radius: 12px;
-            pointer-events: none;
-        }
-
-        .invitation-card.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
         .photo-container {
-            width: 250px;
-            height: 250px;
+            width: 280px;
+            height: 280px;
             margin: 0 auto 40px;
             border-radius: 50%;
             overflow: hidden;
-            border: 4px solid #d4a574;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid #f0a500;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(240, 165, 0, 0.4);
             background: #f5ebe0;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            animation: photoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes photoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .photo-container::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f0a500, transparent, #f0a500);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
         }
 
         .photo-container img {
@@ -231,75 +352,124 @@
             object-fit: cover;
         }
 
-        .invitation-content {
+        .card-content {
             text-align: center;
         }
 
         h1 {
-            font-size: 52px;
-            color: #d4a574;
+            font-size: 64px;
+            background: linear-gradient(45deg, #f0a500, #d4a574, #f0a500);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 25px;
-            text-shadow: none;
             font-family: 'Georgia', serif;
-            font-weight: normal;
+            font-weight: bold;
+            animation: shimmer 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 10px rgba(240, 165, 0, 0.3));
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
         }
 
         .decorative-line {
-            width: 100px;
-            height: 2px;
-            background: #d4a574;
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #f0a500, transparent);
             margin: 25px auto;
-            border-radius: 1px;
+            border-radius: 2px;
             position: relative;
+            animation: lineGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes lineGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(240, 165, 0, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(240, 165, 0, 0.6); }
         }
 
         .subtitle {
-            font-size: 22px;
-            color: #b8956a;
+            font-size: 24px;
+            color: #d4a574;
             font-style: italic;
             margin-bottom: 40px;
             font-weight: 300;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .details {
-            margin: 30px 0;
-            line-height: 1.8;
+        .detail-card {
+            background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(212, 165, 116, 0.1));
+            border-radius: 20px;
+            padding: 50px;
+            margin: 0 auto;
+            max-width: 500px;
+            border: 2px solid rgba(240, 165, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: cardPulse 2s ease-in-out infinite;
         }
 
-        .detail-item {
-            margin: 25px 0;
-            font-size: 18px;
-            color: #333;
-            padding: 0;
-            background: transparent;
-            border-radius: 0;
-            border-left: none;
+        @keyframes cardPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .detail-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: iconBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(240, 165, 0, 0.5));
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
         }
 
         .detail-label {
             font-weight: normal;
-            color: #d4a574;
+            color: #f0a500;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 12px;
-            margin-bottom: 8px;
+            letter-spacing: 3px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .detail-value {
-            color: #333;
-            font-size: 18px;
+            color: #2d3436;
+            font-size: 32px;
+            font-weight: bold;
+            line-height: 1.4;
+            text-shadow: 0 2px 5px rgba(240, 165, 0, 0.2);
         }
 
         .message {
-            font-size: 16px;
-            color: #666;
+            font-size: 18px;
+            color: #333;
             margin: 40px 0 0 0;
-            line-height: 1.8;
-            font-style: normal;
-            padding: 0;
-            background: transparent;
-            border-radius: 0;
-            border: none;
+            line-height: 2;
+            font-style: italic;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .final-card {
+            text-align: center;
+        }
+
+        .final-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 5px 20px rgba(240, 165, 0, 0.6));
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
         }
 
         @media (max-width: 768px) {
@@ -308,24 +478,60 @@
                 max-width: 400px;
                 height: auto;
                 aspect-ratio: 3/2;
-                top: 35%;
             }
 
-            .invitation-card {
-                padding: 40px 25px;
-            }
-
-            .invitation-card::before {
-                top: 15px;
-                left: 15px;
-                right: 15px;
-                bottom: 15px;
+            .card {
+                padding: 40px 30px;
             }
 
             .photo-container {
-                width: 180px;
-                height: 180px;
+                width: 200px;
+                height: 200px;
                 margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 48px;
+            }
+
+            .subtitle {
+                font-size: 20px;
+            }
+
+            .detail-card {
+                padding: 40px 30px;
+            }
+
+            .detail-icon {
+                font-size: 56px;
+            }
+
+            .detail-value {
+                font-size: 26px;
+            }
+
+            .message {
+                font-size: 16px;
+            }
+
+            .final-icon {
+                font-size: 64px;
+            }
+
+            .click-hint {
+                font-size: 14px;
+                bottom: -45px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 35px 25px;
+            }
+
+            .photo-container {
+                width: 170px;
+                height: 170px;
             }
 
             h1 {
@@ -334,170 +540,210 @@
 
             .subtitle {
                 font-size: 18px;
-                margin-bottom: 30px;
             }
 
-            .decorative-line {
-                width: 80px;
-                margin: 20px auto;
+            .detail-card {
+                padding: 35px 25px;
             }
 
-            .details {
-                margin: 25px 0;
-            }
-
-            .detail-item {
-                margin: 20px 0;
-                font-size: 16px;
-            }
-
-            .detail-label {
-                font-size: 11px;
-                letter-spacing: 1.5px;
+            .detail-icon {
+                font-size: 48px;
             }
 
             .detail-value {
-                font-size: 16px;
+                font-size: 22px;
             }
 
             .message {
                 font-size: 15px;
-                margin-top: 30px;
-            }
-
-            .wax-seal {
-                width: 60px;
-                height: 60px;
-            }
-
-            .wax-seal::before {
-                width: 44px;
-                height: 44px;
-            }
-
-            .wax-seal::after {
-                font-size: 28px;
-            }
-
-            .click-hint {
-                font-size: 13px;
-                bottom: -35px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .envelope-wrapper {
-                width: 85%;
-                max-width: 320px;
-            }
-
-            .invitation-card {
-                padding: 35px 20px;
-            }
-
-            .photo-container {
-                width: 150px;
-                height: 150px;
-            }
-
-            h1 {
-                font-size: 34px;
-            }
-
-            .subtitle {
-                font-size: 16px;
-            }
-
-            .detail-item {
-                font-size: 15px;
-            }
-
-            .detail-value {
-                font-size: 15px;
-            }
-
-            .message {
-                font-size: 14px;
-            }
-
-            .wax-seal {
-                width: 55px;
-                height: 55px;
-            }
-
-            .wax-seal::after {
-                font-size: 26px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="envelope-wrapper" id="envelopeWrapper">
-            <div class="envelope">
-                <div class="flap-line"></div>
-                <div class="flap-line"></div>
-                <div class="flap-line"></div>
-                <div class="flap-line"></div>
-                <div class="wax-seal"></div>
+        <!-- Screen 1: Envelope -->
+        <div class="screen active" id="screen1">
+            <div class="envelope-wrapper" id="envelopeWrapper">
+                <div class="envelope">
+                    <div class="flap-line"></div>
+                    <div class="flap-line"></div>
+                    <div class="flap-line"></div>
+                    <div class="flap-line"></div>
+                    <div class="wax-seal"></div>
+                </div>
+                <div class="click-hint">✨ Click to open ✨</div>
             </div>
-            <div class="click-hint">Click to open</div>
         </div>
 
-        <div class="invitation-card" id="invitationCard">
-            <div class="photo-container">
-                <img src="invite.jpeg" alt="Event Photo">
+        <!-- Screen 2: You're Invited -->
+        <div class="screen" id="screen2">
+            <div class="card">
+                <div class="photo-container">
+                    <img src="invite.jpeg" alt="Event Photo">
+                </div>
+                <div class="card-content">
+                    <h1>You're Invited!</h1>
+                    <div class="decorative-line"></div>
+                    <p class="subtitle">Join us for a special celebration</p>
+                </div>
+                <div class="click-hint">✨ Click to continue ✨</div>
             </div>
+        </div>
 
-            <div class="invitation-content">
-                <h1>You're Invited!</h1>
-                <div class="decorative-line"></div>
-                <p class="subtitle">Join us for a special celebration</p>
-                
-                <div class="details">
-                    <div class="detail-item">
+        <!-- Screen 3: Event Name -->
+        <div class="screen" id="screen3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="detail-card">
+                        <div class="detail-icon">🎊</div>
                         <div class="detail-label">Event</div>
-                        <div class="detail-value">Anubhav's Yagyopavit Sanskar</div>
+                        <div class="detail-value">Anubhav's<br>Yagyopavit Sanskar</div>
                     </div>
-                    
-                    <div class="detail-item">
+                </div>
+                <div class="click-hint">✨ Click to continue ✨</div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Date -->
+        <div class="screen" id="screen4">
+            <div class="card">
+                <div class="card-content">
+                    <div class="detail-card">
+                        <div class="detail-icon">📅</div>
                         <div class="detail-label">Date</div>
-                        <div class="detail-value">Monday, January 19th, 2026</div>
+                        <div class="detail-value">Monday<br>January 19th, 2026</div>
                     </div>
-                    
-                    <div class="detail-item">
+                </div>
+                <div class="click-hint">✨ Click to continue ✨</div>
+            </div>
+        </div>
+
+        <!-- Screen 5: Time -->
+        <div class="screen" id="screen5">
+            <div class="card">
+                <div class="card-content">
+                    <div class="detail-card">
+                        <div class="detail-icon">⏰</div>
+                        <div class="detail-label">Time</div>
+                        <div class="detail-value">4:00 AM - 5:00 PM</div>
+                    </div>
+                </div>
+                <div class="click-hint">✨ Click to continue ✨</div>
+            </div>
+        </div>
+
+        <!-- Screen 6: Location -->
+        <div class="screen" id="screen6">
+            <div class="card">
+                <div class="card-content">
+                    <div class="detail-card">
+                        <div class="detail-icon">📍</div>
                         <div class="detail-label">Location</div>
                         <div class="detail-value">A-1, 3/29 Rajender Nagar<br>Sahibabad, Ghaziababad</div>
                     </div>
                 </div>
+                <div class="click-hint">✨ Click to continue ✨</div>
+            </div>
+        </div>
 
-                <p class="message">
-                    Your presence would make our celebration complete. 
-                    Join us for an evening of joy, laughter, and wonderful memories!
-                </p>
+        <!-- Screen 7: Final Message -->
+        <div class="screen" id="screen7">
+            <div class="card">
+                <div class="card-content final-card">
+                    <div class="final-icon">💝</div>
+                    <p class="message">
+                        Your presence would make our celebration complete. 
+                        Join us for a day of joy, laughter, and wonderful memories!
+                    </p>
 
-                <div class="decorative-line" style="margin-top: 40px;"></div>
-                
-                <div class="detail-item" style="margin-top: 30px;">
-                    <div class="detail-label">With Love</div>
-                    <div class="detail-value">Joshi Family</div>
+                    <div class="decorative-line" style="margin-top: 50px;"></div>
+                    
+                    <div style="margin-top: 40px;">
+                        <div class="detail-label">With Love</div>
+                        <div class="detail-value" style="font-size: 28px;">Joshi Family</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const envelopeWrapper = document.getElementById('envelopeWrapper');
-        const invitationCard = document.getElementById('invitationCard');
+        let currentScreen = 1;
+        const totalScreens = 7;
+        const transitions = ['exit-left', 'exit-right', 'exit-up', 'exit-zoom'];
+        const enters = ['enter-right', 'enter-left', 'enter-zoom'];
+        let autoAdvanceTimer;
 
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+
+        // Auto-advance after 4 seconds
+        function startAutoAdvance() {
+            clearTimeout(autoAdvanceTimer);
+            if (currentScreen < totalScreens) {
+                autoAdvanceTimer = setTimeout(() => {
+                    nextScreen();
+                }, 4000);
+            }
+        }
+
+        // Envelope click or auto-advance
         envelopeWrapper.addEventListener('click', function() {
-            envelopeWrapper.classList.add('opening');
+            clearTimeout(autoAdvanceTimer);
+            envelopeWrapper.classList.add('breaking');
             
             setTimeout(() => {
-                envelopeWrapper.classList.add('hidden');
-                invitationCard.classList.add('visible');
+                nextScreen();
             }, 600);
         });
+
+        // Start auto-advance after envelope opens
+        setTimeout(() => {
+            envelopeWrapper.classList.add('breaking');
+            
+            setTimeout(() => {
+                nextScreen();
+            }, 600);
+        }, 4000);
+
+        // Add click handlers for manual control (optional)
+        for (let i = 2; i <= totalScreens; i++) {
+            document.getElementById('screen' + i).addEventListener('click', function() {
+                clearTimeout(autoAdvanceTimer);
+                nextScreen();
+            });
+        }
+
+        function nextScreen() {
+            if (currentScreen < totalScreens) {
+                const currentElement = document.getElementById('screen' + currentScreen);
+                const nextElement = document.getElementById('screen' + (currentScreen + 1));
+                
+                // Random exit transition
+                const exitTransition = transitions[Math.floor(Math.random() * transitions.length)];
+                currentElement.classList.add(exitTransition);
+                currentElement.classList.remove('active');
+                
+                // Random enter transition
+                const enterTransition = enters[Math.floor(Math.random() * enters.length)];
+                
+                setTimeout(() => {
+                    nextElement.classList.add(enterTransition);
+                    nextElement.classList.add('active');
+                    
+                    // Clean up transition classes
+                    setTimeout(() => {
+                        currentElement.className = 'screen';
+                        nextElement.className = 'screen active';
+                    }, 800);
+                }, 100);
+                
+                currentScreen++;
+                
+                // Start timer for next screen
+                startAutoAdvance();
+            }
+        }
     </script>
 </body>
 </html>
